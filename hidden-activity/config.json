@@ -1,0 +1,4 @@
+{
+  "flag": "FLAG{just_4_h1dd3n_4ct1v1ty}",
+  "files": ["./app/src/main/java/com/droidground/hiddenactivity/HiddenActivity.kt"]
+}
