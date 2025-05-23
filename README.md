@@ -17,4 +17,17 @@ Every sample app has the following:
 Using this info the *GitHub action* can build **two versions** of each app (one with the placeholder flag and one with the actual flag).
 This simulates what should happen in a real CTF event, where the player are given the placeholder version while the real one is installed on the device accessible through *DroidGround*.
 
+The release signing config is set as follows:
+
+```kotlin
+signingConfigs {
+    create("release") {
+        storeFile = file(project.findProperty("android.injected.signing.store.file") as String? ?: "")
+        storePassword = project.findProperty("android.injected.signing.store.password") as String? ?: ""
+        keyAlias = project.findProperty("android.injected.signing.key.alias") as String? ?: ""
+        keyPassword = project.findProperty("android.injected.signing.key.password") as String? ?: ""
+    }
+}
+```
+
 If you want to build them on your own you can use the `build.sh` script provided here in the root of the repo.

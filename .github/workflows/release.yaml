@@ -1,0 +1,82 @@
+name: Build all sample apps and create release
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v3
+
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Grant permission to gradlew
+        run: find . -name "gradlew" -exec chmod +x {} \;
+
+      - name: Build all apps (placeholder and flag versions)
+        run: |
+          for appdir in */ ; do
+            if [ -f "$appdir/config.json" ] && [ -f "$appdir/gradlew" ]; then
+              echo "==> Processing $appdir"
+
+              cd "$appdir"
+
+              # Load config values
+              FLAG=$(jq -r '.flag' config.json)
+              FILES=$(jq -r '.files[]' config.json)
+
+              # Placeholder build (no edits)
+              echo "-> Building placeholder version"
+
+              pwd
+              ls 
+              ls ../
+
+              ./gradlew clean assembleRelease \
+                -Pandroid.injected.signing.store.file=$GITHUB_WORKSPACE/release-key.jks \
+                -Pandroid.injected.signing.store.password=${{ secrets.KEYSTORE_PASSWORD }} \
+                -Pandroid.injected.signing.key.alias=${{ secrets.KEY_ALIAS }} \
+                -Pandroid.injected.signing.key.password=${{ secrets.KEYSTORE_PASSWORD }}
+
+              cp app/build/outputs/apk/release/app-release.apk "../${appdir%/}-placeholder.apk"
+
+              # Modify files for flag version
+              echo "-> Replacing placeholder with flag"
+              for file in $FILES; do
+                echo "Editing $file"
+                sed -i "s/DROIDGROUND_FLAG_PLACEHOLDER/${FLAG//\//\\/}/g" "$file"
+              done
+
+              echo "-> Building flag version"
+              ./gradlew clean assembleRelease \
+                -Pandroid.injected.signing.store.file=$GITHUB_WORKSPACE//release-key.jks \
+                -Pandroid.injected.signing.store.password=${{ secrets.KEYSTORE_PASSWORD }} \
+                -Pandroid.injected.signing.key.alias=${{ secrets.KEY_ALIAS }} \
+                -Pandroid.injected.signing.key.password=${{ secrets.KEYSTORE_PASSWORD }}
+
+              cp app/build/outputs/apk/release/app-release.apk "../${appdir%/}-flag.apk"
+
+              # Restore original files (optional, to not pollute git)
+              git restore .
+
+              cd ..
+            fi
+          done
+
+      - name: Upload all APKs to GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            *-placeholder.apk
+            *-flag.apk
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
