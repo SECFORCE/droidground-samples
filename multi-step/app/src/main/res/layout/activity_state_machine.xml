@@ -7,4 +7,13 @@
     android:layout_height="match_parent"
     tools:context=".StateMachineActivity">
 
+    <TextView
+        android:id="@+id/state_machine_txt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="69dp"
+        android:layout_marginTop="356dp"
+        android:text="Hi! I'm a state machine. I'm in the INIT state."
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
