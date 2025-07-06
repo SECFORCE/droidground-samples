@@ -4,9 +4,10 @@ A simple collection of dummy applications to showcase [DroidGround](https://gith
 
 The following applications are currently available:
 
-| Application     | Description                                                         |
-|-----------------|---------------------------------------------------------------------|
-| Hidden Activity | A simple application with an hidden activity that contains the flag |
+| Application     | Description                                                             |
+|-----------------|-------------------------------------------------------------------------|
+| Hidden Activity | A simple application with an hidden activity that contains the flag     |
+| Multi Step      | An application with an exported activity with a state machine within it |
 
 Every sample app has the following:
 - a placeholder flag set to `DROIDGROUND_FLAG_PLACEHOLDER`

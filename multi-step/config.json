@@ -1,0 +1,4 @@
+{
+  "flag": "FLAG{th3_0rd3r_1s_1mp0rt4nt}",
+  "files": ["./app/src/main/java/com/droidground/multistep/StateMachineActivity.kt"]
+}
